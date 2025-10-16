@@ -4,9 +4,12 @@
   "description": "An unofficial desktop app for Google Meet",
   "main": "./src/index.js",
   "scripts": {
-    "start": "electron .",
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder"
+    "start": "npm run build && electron .",
+    "build": "webpack --mode production",
+    "dev": "webpack --mode development --watch",
+    "pack": "npm run build && electron-builder --dir",
+    "dist": "npm run build && electron-builder",
+    "type-check": "tsc --noEmit"
   },
   "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [
@@ -19,18 +22,37 @@
   "author": "Arjun Ganesan",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^27.0.0",
-    "electron-builder": "^24.6.4"
+    "@types/electron": "^1.4.38",
+    "@types/electron-window-state": "^2.0.34",
+    "@types/node": "^24.7.2",
+    "@types/webpack": "^5.28.5",
+    "css-loader": "^7.1.2",
+    "electron": "^38.3.0",
+    "electron-builder": "^24.13.3",
+    "html-webpack-plugin": "^5.6.4",
+    "style-loader": "^4.0.0",
+    "ts-loader": "^9.5.4",
+    "typescript": "^5.9.3",
+    "webpack": "^5.102.1",
+    "webpack-cli": "^6.0.1"
   },
   "dependencies": {
-    "electron-window-state": "^5.0.3",
-    "mac-screen-capture-permissions": "^2.0.0"
+    "electron-log": "^5.4.3",
+    "electron-window-state": "^5.0.3"
   },
   "build": {
     "appId": "com.arjunganesan.googleMeet",
     "productName": "Google Meet",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "ms4ndst",
+        "repo": "google-meet-desktop"
+      }
+    ],
     "win": {
       "icon": "src/assets/icon.ico",
+      "verifyUpdateCodeSignature": false,
       "target": [
         {
           "target": "nsis",

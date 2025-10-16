@@ -3,6 +3,8 @@
 
 <head>
   <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self' https://meet.google.com; script-src 'self' 'unsafe-inline' https://meet.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://meet.google.com https://*.google.com" />
   <title>Google Meet</title>
   <meta name="color-scheme" content="light">
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet" />
@@ -17,22 +19,165 @@
       <img src="assets/home.svg" />
     </button>
     <div class="title">Google Meet</div>
+    <div class="feature-controls">
+      <button id="togglePiP" title="Picture in Picture">
+        <img src="assets/pip.svg" />
+      </button>
+      <button id="toggleNotes" title="Meeting Notes">
+        <img src="assets/notes.svg" />
+      </button>
+    </div>
     <div class="controls">
-      <button id="minimize">
+      <button id="minimize" class="minimize">
         <img src="assets/window-minimize.svg" />
       </button>
-      <button id="maximize">
+      <button id="maximize" class="maximize">
         <img src="assets/window-maximize.svg" />
       </button>
-      <button id="restore">
+      <button id="restore" class="maximize">
         <img src="assets/window-restore.svg" />
       </button>
-      <button id="close">
+      <button id="close" class="close">
         <img src="assets/times.svg" />
       </button>
     </div>
   </div>
-  <script src="scripts/window.js"></script>
+  <script>
+    console.log('Window script starting...');
+    
+    // Debug IPC availability
+    console.log('Window object keys:', Object.keys(window));
+    console.log('IPC object:', window.ipc);
+    
+    if (!window.ipc) {
+      console.error('IPC not available!');
+    } else {
+      console.log('IPC methods:', Object.keys(window.ipc));
+      console.log('IPC send type:', typeof window.ipc.send);
+    }
+    
+    // Get button references
+    const homeButton = document.getElementById("home");
+    const minimizeButton = document.getElementById("minimize");
+    const maximizeButton = document.getElementById("maximize");
+    const restoreButton = document.getElementById("restore");
+    const closeButton = document.getElementById("close");
+    const pipButton = document.getElementById("togglePiP");
+    const notesButton = document.getElementById("toggleNotes");
+
+    restoreButton.style.display = "none";
+
+    homeButton.addEventListener("click", () => {
+      console.log('Home button clicked');
+      window.ipc.send("window.home");
+    });
+
+    minimizeButton.addEventListener("click", async () => {
+      console.log('Minimize button clicked');
+      if (!window.ipc) {
+        console.error('IPC not available when minimize clicked!');
+        return;
+      }
+      if (typeof window.ipc.invoke !== 'function') {
+        console.error('IPC invoke is not a function:', window.ipc);
+        return;
+      }
+      try {
+        await window.ipc.invoke("window.minimize");
+        console.log('Minimize command completed');
+      } catch (error) {
+        console.error('Error invoking minimize command:', error);
+      }
+    });
+
+    maximizeButton.addEventListener("click", async () => {
+      console.log('Maximize button clicked');
+      if (!window.ipc) {
+        console.error('IPC not available when maximize clicked!');
+        return;
+      }
+      if (typeof window.ipc.invoke !== 'function') {
+        console.error('IPC invoke is not a function:', window.ipc);
+        return;
+      }
+      try {
+        await window.ipc.invoke("window.maximize");
+        console.log('Maximize command completed');
+        maximizeButton.style.display = "none";
+        restoreButton.style.display = "flex";
+      } catch (error) {
+        console.error('Error invoking maximize command:', error);
+      }
+    });
+
+    restoreButton.addEventListener("click", async () => {
+      console.log('Restore button clicked');
+      if (!window.ipc) {
+        console.error('IPC not available when restore clicked!');
+        return;
+      }
+      if (typeof window.ipc.invoke !== 'function') {
+        console.error('IPC invoke is not a function:', window.ipc);
+        return;
+      }
+      try {
+        await window.ipc.invoke("window.restore");
+        console.log('Restore command completed');
+        maximizeButton.style.display = "flex";
+        restoreButton.style.display = "none";
+      } catch (error) {
+        console.error('Error invoking restore command:', error);
+      }
+    });
+
+    closeButton.addEventListener("click", async () => {
+      console.log('Close button clicked');
+      if (!window.ipc) {
+        console.error('IPC not available when close clicked!');
+        return;
+      }
+      if (typeof window.ipc.invoke !== 'function') {
+        console.error('IPC invoke is not a function:', window.ipc);
+        return;
+      }
+      try {
+        await window.ipc.invoke("window.close");
+        console.log('Close command completed');
+      } catch (error) {
+        console.error('Error invoking close command:', error);
+      }
+    });
+
+    pipButton.addEventListener("click", async () => {
+      console.log('PiP button clicked');
+      try {
+        await window.ipc.invoke("toggle:pip");
+        console.log('PiP command completed');
+      } catch (error) {
+        console.error('Error invoking PiP command:', error);
+      }
+    });
+
+    notesButton.addEventListener("click", async () => {
+      console.log('Notes button clicked');
+      try {
+        await window.ipc.invoke("toggle:notes");
+        console.log('Notes command completed');
+      } catch (error) {
+        console.error('Error invoking Notes command:', error);
+      }
+    });
+
+    window.ipc.on("window.maximized", () => {
+      maximizeButton.style.display = "none";
+      restoreButton.style.display = "flex";
+    });
+
+    window.ipc.on("window.restored", () => {
+      maximizeButton.style.display = "flex";
+      restoreButton.style.display = "none";
+    });
+  </script>
 </body>
 
 </html>

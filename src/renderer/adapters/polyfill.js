@@ -1,8 +1,25 @@
-const { ipcRenderer } = require("electron");
+const { ipcRenderer, desktopCapturer } = require("electron");
 
 require("./shortcut");
 const { getCPUInfo } = require("./cpuinfo");
-const { getScreenId } = require("./screen");
+
+async function getScreenId(sources) {
+  try {
+    const screens = await desktopCapturer.getSources({ 
+      types: ['screen', 'window'],
+      thumbnailSize: { width: 0, height: 0 },
+      fetchWindowIcons: true
+    });
+    if (screens.length > 0) {
+      console.log('Available screens:', screens.map(s => s.name));
+      return `screen:${screens[0].id}`;
+    }
+    return null;
+  } catch (e) {
+    console.error('Error getting screen sources:', e);
+    return null;
+  }
+}
 
 (function () {
   const postMessageCallbacks = [];
@@ -50,13 +67,36 @@ const { getScreenId } = require("./screen");
   const originalGU = window.navigator.mediaDevices.getUserMedia.bind(
     navigator.mediaDevices
   );
-  window.navigator.mediaDevices.getUserMedia = function (constraints) {
-    if (
-      constraints.video &&
-      constraints.video.mandatory &&
-      constraints.video.mandatory.chromeMediaSource === "desktop"
-    )
+  window.navigator.mediaDevices.getUserMedia = async function (constraints) {
+    console.log('getUserMedia called with constraints:', constraints);
+    
+    if (constraints.video && constraints.video.mandatory && constraints.video.mandatory.chromeMediaSource === "desktop") {
+      console.log('Screen sharing requested');
+      const screenId = await getScreenId(['screen', 'window']);
+      if (!screenId) {
+        throw new Error('Failed to get screen source');
+      }
+      
+      constraints.video.mandatory.chromeMediaSourceId = screenId;
       constraints.audio = false;
+      console.log('Using screen constraints:', constraints);
+    } else if (constraints.video) {
+      // Optimize video constraints for hardware acceleration
+      if (constraints.video === true) {
+        constraints.video = {};
+      }
+      constraints.video = {
+        ...constraints.video,
+        width: { ideal: 1280 },
+        height: { ideal: 720 },
+        frameRate: { ideal: 30, max: 60 },
+        deviceId: constraints.video.deviceId,
+        // Enable hardware acceleration features
+        accelerator: "gpu",
+        hardwareAcceleration: true
+      };
+    }
+    
     return originalGU(constraints);
   };
 

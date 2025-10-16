@@ -1,10 +1,14 @@
 const { desktopCapturer } = require("electron");
 
 async function fetchDesktopSources(types) {
-  const sources = await desktopCapturer.getSources({
-    types,
-    fetchWindowIcons: true,
-  });
+  console.log('Fetching desktop sources for types:', types);
+  try {
+    const sources = await desktopCapturer.getSources({
+      types: types,
+      thumbnailSize: { width: 150, height: 150 },
+      fetchWindowIcons: true,
+    });
+    console.log('Found sources:', sources.length);
   return sources.map((source) => ({
     id: source.id,
     name: source.name,
@@ -61,11 +65,24 @@ function createScreenSelectionPopup(sources, types) {
 
 module.exports = {
   getScreenId: async (types) => {
-    const sources = await fetchDesktopSources(types);
-    if (sources.length === 1) {
-      return sources[0].id;
+    try {
+      console.log('Getting screen ID for types:', types);
+      const sources = await fetchDesktopSources(types);
+      if (sources.length === 0) {
+        console.error('No screen sources found');
+        return null;
+      }
+      if (sources.length === 1) {
+        console.log('Single source found, using:', sources[0].id);
+        return sources[0].id;
+      }
+      console.log('Multiple sources found, showing selection popup');
+      const screenId = await createScreenSelectionPopup(sources, types);
+      console.log('Selected screen ID:', screenId);
+      return screenId;
+    } catch (error) {
+      console.error('Error in getScreenId:', error);
+      return null;
     }
-    const screenId = await createScreenSelectionPopup(sources, types);
-    return screenId;
   },
 };

@@ -14,46 +14,76 @@ body {
 }
 
 .titlebar {
-  height: 40px;
+  height: 32px;
   width: 100%;
   -webkit-app-region: drag;
   display: flex;
+  background-color: #1a1a1a;
 }
 
 .titlebar .title {
   flex: 1 1 100%;
-  color: white;
-  font-size: 14px;
-  font-weight: 600;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 500;
   display: flex;
   align-items: center;
-  padding-left: 8px;
+  padding-left: 12px;
 }
 
-.titlebar .controls {
+.titlebar .controls,
+.titlebar .feature-controls {
   display: flex;
+  height: 32px;
+}
+
+.titlebar .feature-controls {
+  margin-right: auto;
+}
+
+.titlebar .feature-controls button {
+  width: 32px;
+  background-color: transparent;
+  transition: background-color 0.2s;
+}
+
+.titlebar .feature-controls button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .titlebar button {
-  width: 40px;
-  height: 40px;
+  width: 46px;
+  height: 32px;
   border: none;
-  background-color: transparent;
   outline: none;
   -webkit-app-region: no-drag;
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: filter 0.2s;
+}
+
+.titlebar button.minimize {
+  background-color: #e6b412;
+}
+
+.titlebar button.maximize {
+  background-color: #34c149;
+}
+
+.titlebar button.close {
+  background-color: #f44336;
 }
 
 .titlebar button:hover {
-  background-color: rgba(0, 0, 0, 0.2);
+  filter: brightness(1.2);
 }
 
 .titlebar button img {
-  width: 16px;
-  height: 16px;
+  width: 12px;
+  height: 12px;
   opacity: 0.8;
+  transition: opacity 0.2s;
 }
 
 .titlebar button:hover img {

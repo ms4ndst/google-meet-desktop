@@ -3,10 +3,7 @@ const { app, BrowserWindow, systemPreferences, session, nativeTheme } = require(
 
 // Force light mode
 nativeTheme.themeSource = 'light';
-const {
-  hasScreenCapturePermission,
-  hasPromptedForPermission,
-} = require("mac-screen-capture-permissions");
+// Screen capture permissions are handled by the OS on Windows
 const {
   WIN_USERAGENT,
   MAC_USERAGENT,
@@ -16,24 +13,44 @@ const {
 // Enable sandbox mode for enhanced security
 app.enableSandbox();
 
-// Set security-related preferences and enable required features
-app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors');
-app.commandLine.appendSwitch('disable-gpu-vsync');
-app.commandLine.appendSwitch('ignore-certificate-errors');
-app.commandLine.appendSwitch('disable-gpu-compositing');
-app.commandLine.appendSwitch('enable-features', 'WebRTCPipeWireCapturer');
+// Enable DevTools in development
+app.on('ready', () => {
+  require('electron').globalShortcut.register('Control+Shift+I', () => {
+    const win = BrowserWindow.getFocusedWindow();
+    if (win) {
+      win.webContents.toggleDevTools();
+    }
+  });
+});
 
-// Use software rendering if hardware acceleration fails
-app.disableHardwareAcceleration();
+// Enable hardware acceleration and optimize video performance
+app.commandLine.appendSwitch('enable-features', 'WebRTCPipeWireCapturer,WebRTCHWDecoding,WebRTCHWEncoding,HardwareMediaKeyHandling,DesktopCapture,MediaStreamAPI');
+app.commandLine.appendSwitch('enable-gpu-rasterization');
+app.commandLine.appendSwitch('enable-zero-copy');
+app.commandLine.appendSwitch('ignore-gpu-blocklist');
+app.commandLine.appendSwitch('enable-accelerated-video-decode');
+app.commandLine.appendSwitch('enable-accelerated-video');
+app.commandLine.appendSwitch('enable-native-gpu-memory-buffers');
+app.commandLine.appendSwitch('force-gpu-mem-available-mb', '1024');
+
+// Security settings
+app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors');
+app.commandLine.appendSwitch('ignore-certificate-errors');
 
 require("./main/cpuinfo");
 require("./main/shortcut");
 const { createMainWindow } = require("./main/window");
 
-if (process.platform !== "win32" && process.platform !== "darwin") {
+// Platform specific optimizations
+if (process.platform === "win32") {
+  app.commandLine.appendSwitch('enable-hardware-overlay', 'true');
+  app.commandLine.appendSwitch('enable-win7-webrtc-hw-h264');
+  app.commandLine.appendSwitch('enable-direct-composition-encoder');
+} else if (process.platform === "darwin") {
+  app.commandLine.appendSwitch('enable-accelerated-video-decode');
+  app.commandLine.appendSwitch('enable-media-encoder');
+} else {
   app.commandLine.appendSwitch("enable-transparent-visuals");
-  app.commandLine.appendSwitch("disable-gpu");
-  app.disableHardwareAcceleration();
 }
 
 app.whenReady().then(async () => {

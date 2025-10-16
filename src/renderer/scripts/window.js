@@ -3,30 +3,40 @@ const minimizeButton = document.getElementById("minimize");
 const maximizeButton = document.getElementById("maximize");
 const restoreButton = document.getElementById("restore");
 const closeButton = document.getElementById("close");
+const pipButton = document.getElementById("togglePiP");
+const notesButton = document.getElementById("toggleNotes");
 
 restoreButton.style.display = "none";
 
 homeButton.addEventListener("click", () => {
-  ipc.send("window.home");
+  window.ipc.send("window.home");
 });
 minimizeButton.addEventListener("click", () => {
-  ipc.send("window.minimize");
+  window.ipc.send("window.minimize");
 });
 maximizeButton.addEventListener("click", () => {
-  ipc.send("window.maximize");
+  window.ipc.send("window.maximize");
 });
 restoreButton.addEventListener("click", () => {
-  ipc.send("window.restore");
+  window.ipc.send("window.restore");
 });
 closeButton.addEventListener("click", () => {
-  ipc.send("window.close");
+  window.ipc.send("window.close");
 });
 
-ipc.on("window.maximized", () => {
+pipButton.addEventListener("click", () => {
+  window.ipc.send("toggle:pip");
+});
+
+notesButton.addEventListener("click", () => {
+  window.ipc.send("toggle:notes");
+});
+
+window.ipc.on("window.maximized", () => {
   maximizeButton.style.display = "none";
   restoreButton.style.display = "flex";
 });
-ipc.on("window.restored", () => {
+window.ipc.on("window.restored", () => {
   maximizeButton.style.display = "flex";
   restoreButton.style.display = "none";
 });

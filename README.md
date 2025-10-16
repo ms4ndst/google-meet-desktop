@@ -12,12 +12,15 @@
 
 ## Recent Updates (October 2025)
 
-- Updated to Electron 27.0.0 for improved performance and security
+- Updated to Electron 38.3.0 for improved performance and security
 - Modernized security settings and app configuration
 - Added support for light/dark theme
 - Updated all dependencies to their latest versions
 - Improved Windows installer with proper application icons
 - Enhanced browser compatibility for Google Meet
+- Improved memory management and resource cleanup
+- Enhanced error handling with electron-log integration
+- Optimized screen sharing and window management
 
 ## Installation
 
