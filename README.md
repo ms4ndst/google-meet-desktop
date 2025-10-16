@@ -2,8 +2,6 @@
 
 **Unofficial desktop application for Google Meet built with electron.**
 
-![Screenshot of Google Meet Desktop](https://static.arjun-g.com/google-meet/google-meet-screenshot.jpg)
-
 ## Features
 
 - Presenter can draw/annotate on screen when sharing the screen
