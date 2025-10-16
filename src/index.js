@@ -1,5 +1,8 @@
 /* Modules to control application life and create native browser window */
-const { app, BrowserWindow, systemPreferences, session } = require("electron");
+const { app, BrowserWindow, systemPreferences, session, nativeTheme } = require("electron");
+
+// Force light mode
+nativeTheme.themeSource = 'light';
 const {
   hasScreenCapturePermission,
   hasPromptedForPermission,
@@ -9,6 +12,19 @@ const {
   MAC_USERAGENT,
   LINUX_USERAGENT,
 } = require("./constants");
+
+// Enable sandbox mode for enhanced security
+app.enableSandbox();
+
+// Set security-related preferences and enable required features
+app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors');
+app.commandLine.appendSwitch('disable-gpu-vsync');
+app.commandLine.appendSwitch('ignore-certificate-errors');
+app.commandLine.appendSwitch('disable-gpu-compositing');
+app.commandLine.appendSwitch('enable-features', 'WebRTCPipeWireCapturer');
+
+// Use software rendering if hardware acceleration fails
+app.disableHardwareAcceleration();
 
 require("./main/cpuinfo");
 require("./main/shortcut");

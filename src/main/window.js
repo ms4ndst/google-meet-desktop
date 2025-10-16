@@ -28,9 +28,14 @@ function createMainWindow() {
     minWidth: 800,
     minHeight: 600,
     frame: false,
+    icon: path.join(__dirname, '..', 'assets', 'icon.ico'),
     webPreferences: {
       contextIsolation: true,
+      nodeIntegration: false,
+      sandbox: true,
+      webSecurity: true,
       preload: path.join(__dirname, "..", "renderer", "preload.js"),
+      spellcheck: true
     },
   }));
   mainWindowState.manage(mainWindow);
@@ -44,6 +49,10 @@ function createMainWindow() {
 
   const googleMeetView = (global.googleMeetView = new BrowserView({
     webPreferences: {
+      contextIsolation: true,
+      nodeIntegration: false,
+      sandbox: true,
+      webSecurity: true,
       preload: path.join(
         __dirname,
         "..",
@@ -51,9 +60,15 @@ function createMainWindow() {
         "adapters",
         "polyfill.js"
       ),
+      nativeWindowOpen: true,
+      webgl: true,
+      plugins: true,
+      experimentalFeatures: true
     },
   }));
   mainWindow.setBrowserView(googleMeetView);
+  
+  // Load with default light mode
   googleMeetView.webContents.loadURL(GOOGLE_MEET_URL);
   googleMeetView.setBounds({
     x: 0,
@@ -191,6 +206,9 @@ function createScreenToolsWindow() {
     transparent: true,
     webPreferences: {
       contextIsolation: true,
+      nodeIntegration: false,
+      sandbox: true,
+      webSecurity: true,
       preload: path.join(__dirname, "..", "renderer", "preload.js"),
     },
   });

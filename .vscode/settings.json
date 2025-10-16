@@ -1,7 +1,7 @@
 {
-    "editor.renderIndentGuides": true,
-    "editor.autoIndent": "full",
+  "editor.autoIndent": "full",
     "eslint.workingDirectories": ["src"],
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "editor.guides.indentation": true
   }
   

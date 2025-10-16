@@ -19,21 +19,46 @@
   "author": "Arjun Ganesan",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^8.2.4",
-    "electron-builder": "^22.6.0"
+    "electron": "^27.0.0",
+    "electron-builder": "^24.6.4"
   },
   "dependencies": {
     "electron-window-state": "^5.0.3",
-    "mac-screen-capture-permissions": "^1.1.0"
+    "mac-screen-capture-permissions": "^2.0.0"
   },
   "build": {
     "appId": "com.arjunganesan.googleMeet",
     "productName": "Google Meet",
+    "win": {
+      "icon": "src/assets/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Google Meet"
+    },
     "mac": {
+      "icon": "src/assets/icon.ico",
       "extendInfo": {
         "NSCameraUsageDescription": "This app requires camera access for video call in Google Meet.",
         "NSMicrophoneUsageDescription": "This app requires microphone access for audio call in Google Meet."
       }
+    },
+    "linux": {
+      "icon": "src/assets/icon.ico",
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Network"
     }
   }
 }
