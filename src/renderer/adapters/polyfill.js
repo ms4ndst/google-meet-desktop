@@ -5,7 +5,7 @@ const { getCPUInfo } = require("./cpuinfo");
 
 async function getScreenId(sources) {
   try {
-    const screens = await desktopCapturer.getSources({ 
+    const screens = await desktopCapturer.getSources({
       types: ['screen', 'window'],
       thumbnailSize: { width: 0, height: 0 },
       fetchWindowIcons: true
@@ -69,14 +69,14 @@ async function getScreenId(sources) {
   );
   window.navigator.mediaDevices.getUserMedia = async function (constraints) {
     console.log('getUserMedia called with constraints:', constraints);
-    
+
     if (constraints.video && constraints.video.mandatory && constraints.video.mandatory.chromeMediaSource === "desktop") {
       console.log('Screen sharing requested');
       const screenId = await getScreenId(['screen', 'window']);
       if (!screenId) {
         throw new Error('Failed to get screen source');
       }
-      
+
       constraints.video.mandatory.chromeMediaSourceId = screenId;
       constraints.audio = false;
       console.log('Using screen constraints:', constraints);
@@ -96,7 +96,7 @@ async function getScreenId(sources) {
         hardwareAcceleration: true
       };
     }
-    
+
     return originalGU(constraints);
   };
 

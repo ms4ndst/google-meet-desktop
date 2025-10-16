@@ -47,7 +47,7 @@ function createMainWindow() {
     webContentsDebuggingEnabled: true,
   }));
   mainWindowState.manage(mainWindow);
-  
+
   // Register IPC handlers before loading the page
   ipcMain.handle('DESKTOP_CAPTURER_GET_SOURCES', async (event, opts) => {
     console.log('Getting desktop capture sources');
@@ -116,12 +116,12 @@ function createMainWindow() {
       autoplayPolicy: 'no-user-gesture-required'
     },
   }));
-  
+
   // Set permissions for media
   googleMeetView.webContents.session.setPermissionCheckHandler((webContents, permission) => {
     return true;
   });
-  
+
   googleMeetView.webContents.session.setPermissionRequestHandler((webContents, permission, callback) => {
     callback(true);
   });

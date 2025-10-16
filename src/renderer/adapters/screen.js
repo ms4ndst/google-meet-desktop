@@ -9,25 +9,24 @@ async function fetchDesktopSources(types) {
       fetchWindowIcons: true,
     });
     console.log('Found sources:', sources.length);
-  return sources.map((source) => ({
-    id: source.id,
-    name: source.name,
-    displayId: source.display_id,
-    icon: source.appIcon && source.appIcon.toDataURL(),
-    thumbnail: source.thumbnail.toDataURL(),
-  }));
-}
+    return sources.map((source) => ({
+      id: source.id,
+      name: source.name,
+      displayId: source.display_id,
+      icon: source.appIcon && source.appIcon.toDataURL(),
+      thumbnail: source.thumbnail.toDataURL(),
+    }));
+  }
 
 function createScreenSelectionPopup(sources, types) {
-  return new Promise((resolve) => {
-    const screenSelectionPopup = document.createElement("div");
-    screenSelectionPopup.className = "screen-selection-popup";
-    screenSelectionPopup.innerHTML = `
+    return new Promise((resolve) => {
+      const screenSelectionPopup = document.createElement("div");
+      screenSelectionPopup.className = "screen-selection-popup";
+      screenSelectionPopup.innerHTML = `
     <div class="screen-list-container">
-        <div class="screen-list-title">${
-          types.includes("screen") && types.includes("window")
-            ? "Share your entire screen or an application screen"
-            : types.includes("screen")
+        <div class="screen-list-title">${types.includes("screen") && types.includes("window")
+          ? "Share your entire screen or an application screen"
+          : types.includes("screen")
             ? "Share your entire screen"
             : "Share an application screen"
         }</div>
@@ -36,53 +35,53 @@ function createScreenSelectionPopup(sources, types) {
         </button>
         <div class="screen-list"></div>
     </div>`;
-    const screenList = screenSelectionPopup.querySelector(".screen-list");
-    sources.forEach((source) => {
-      const screenListItem = document.createElement("div");
-      screenListItem.className = "screen-list-item";
-      screenListItem.innerHTML = `
+      const screenList = screenSelectionPopup.querySelector(".screen-list");
+      sources.forEach((source) => {
+        const screenListItem = document.createElement("div");
+        screenListItem.className = "screen-list-item";
+        screenListItem.innerHTML = `
                 <img src="${source.thumbnail}" />
                 <div class="screen-list-item-name">
                     ${source.icon ? `<img src="${source.icon}" />` : ""}
                     <span>${source.name}</span>
                 </div>
             `;
-      screenListItem.addEventListener("click", () => {
-        resolve(source.id);
-        screenSelectionPopup.remove();
+        screenListItem.addEventListener("click", () => {
+          resolve(source.id);
+          screenSelectionPopup.remove();
+        });
+        screenList.appendChild(screenListItem);
       });
-      screenList.appendChild(screenListItem);
+      screenSelectionPopup
+        .querySelector(".close-button")
+        .addEventListener("click", () => {
+          resolve(null);
+          screenSelectionPopup.remove();
+        });
+      document.body.appendChild(screenSelectionPopup);
     });
-    screenSelectionPopup
-      .querySelector(".close-button")
-      .addEventListener("click", () => {
-        resolve(null);
-        screenSelectionPopup.remove();
-      });
-    document.body.appendChild(screenSelectionPopup);
-  });
-}
+  }
 
-module.exports = {
-  getScreenId: async (types) => {
-    try {
-      console.log('Getting screen ID for types:', types);
-      const sources = await fetchDesktopSources(types);
-      if (sources.length === 0) {
-        console.error('No screen sources found');
+  module.exports = {
+    getScreenId: async (types) => {
+      try {
+        console.log('Getting screen ID for types:', types);
+        const sources = await fetchDesktopSources(types);
+        if (sources.length === 0) {
+          console.error('No screen sources found');
+          return null;
+        }
+        if (sources.length === 1) {
+          console.log('Single source found, using:', sources[0].id);
+          return sources[0].id;
+        }
+        console.log('Multiple sources found, showing selection popup');
+        const screenId = await createScreenSelectionPopup(sources, types);
+        console.log('Selected screen ID:', screenId);
+        return screenId;
+      } catch (error) {
+        console.error('Error in getScreenId:', error);
         return null;
       }
-      if (sources.length === 1) {
-        console.log('Single source found, using:', sources[0].id);
-        return sources[0].id;
-      }
-      console.log('Multiple sources found, showing selection popup');
-      const screenId = await createScreenSelectionPopup(sources, types);
-      console.log('Selected screen ID:', screenId);
-      return screenId;
-    } catch (error) {
-      console.error('Error in getScreenId:', error);
-      return null;
-    }
-  },
-};
+    },
+  };

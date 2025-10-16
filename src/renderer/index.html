@@ -44,18 +44,18 @@
   </div>
   <script>
     console.log('Window script starting...');
-    
+
     // Debug IPC availability
     console.log('Window object keys:', Object.keys(window));
     console.log('IPC object:', window.ipc);
-    
+
     if (!window.ipc) {
       console.error('IPC not available!');
     } else {
       console.log('IPC methods:', Object.keys(window.ipc));
       console.log('IPC send type:', typeof window.ipc.send);
     }
-    
+
     // Get button references
     const homeButton = document.getElementById("home");
     const minimizeButton = document.getElementById("minimize");
