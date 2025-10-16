@@ -67,7 +67,7 @@ function createMainWindow() {
     },
   }));
   mainWindow.setBrowserView(googleMeetView);
-  
+
   // Load with default light mode
   googleMeetView.webContents.loadURL(GOOGLE_MEET_URL);
   googleMeetView.setBounds({
