@@ -10,25 +10,6 @@
 
   ![Demo of annotation feature](https://static.arjun-g.com/google-meet/google-meet-annotation.gif)
 
-- ~~Share audio while sharing application window (Windows Only)~~ (Temporary disabled due to a audio loop issue)
-- Global shortcuts to mute/unmute microphone and switch on/off camera
-
-| Shortcut               | Use                           |
-| ---------------------- | ----------------------------- |
-| `Ctrl/⌘` + `Alt` + `A` | Toggle microphone mute/unmute |
-| `Ctrl/⌘` + `Alt` + `V` | Toggle camera on/off          |
-
-## Todo
-
-- [ ] Ability to stop screenshare without opening the main window
-- [ ] Ability to draw/annotate on presenter's screen for all participants
-- [ ] Show floating video preview when minimized similar to zoom, slack
-- [ ] Customizable shortcuts
-- [ ] Mute/umute all participants
-- [ ] Add to windows startup
-- [ ] Add ability to share audio while screensharing in mac
-- [ ] Download chat history
-
 ## Recent Updates (October 2025)
 
 - Updated to Electron 27.0.0 for improved performance and security
